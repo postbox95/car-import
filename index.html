@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Import Manager - Japan to Bangladesh</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <i class="fas fa-ship"></i>
+                <h1>Car Import Manager</h1>
+                <span class="subtitle">Japan → Bangladesh</span>
+            </div>
+            <div class="header-stats">
+                <div class="stat-box">
+                    <span class="stat-label">Total Inventory</span>
+                    <span class="stat-value" id="total-cars">0</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Total Investment</span>
+                    <span class="stat-value" id="total-investment">৳0</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar Navigation -->
+            <nav class="sidebar">
+                <ul>
+                    <li class="active" data-tab="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</li>
+                    <li data-tab="add-car"><i class="fas fa-plus-circle"></i> Add New Car</li>
+                    <li data-tab="inventory"><i class="fas fa-car"></i> Inventory</li>
+                    <li data-tab="cost-calculator"><i class="fas fa-calculator"></i> Cost Calculator</li>
+                    <li data-tab="reports"><i class="fas fa-chart-bar"></i> Reports</li>
+                    <li data-tab="settings"><i class="fas fa-cog"></i> Settings</li>
+                </ul>
+            </nav>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Dashboard Tab -->
+                <div id="dashboard" class="tab-content active">
+                    <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+                    <div class="dashboard-cards">
+                        <div class="card">
+                            <h3>In Transit</h3>
+                            <div class="card-value" id="in-transit-count">0</div>
+                            <div class="card-sub">Cars on the way</div>
+                        </div>
+                        <div class="card">
+                            <h3>At Port</h3>
+                            <div class="card-value" id="at-port-count">0</div>
+                            <div class="card-sub">Awaiting clearance</div>
+                        </div>
+                        <div class="card">
+                            <h3>In Showroom</h3>
+                            <div class="card-value" id="in-showroom-count">0</div>
+                            <div class="card-sub">Ready for sale</div>
+                        </div>
+                        <div class="card">
+                            <h3>Sold</h3>
+                            <div class="card-value" id="sold-count">0</div>
+                            <div class="card-sub">This month</div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-section">
+                        <h3>Recent Cars</h3>
+                        <div id="recent-cars-list" class="recent-cars">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="dashboard-section">
+                        <h3>Upcoming Payments</h3>
+                        <div id="upcoming-payments" class="payments-list">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add New Car Tab -->
+                <div id="add-car" class="tab-content">
+                    <h2><i class="fas fa-plus-circle"></i> Add New Car</h2>
+                    
+                    <form id="add-car-form">
+                        <div class="form-section">
+                            <h3><i class="fas fa-car"></i> Basic Information</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="chassis-number">Chassis Number *</label>
+                                    <input type="text" id="chassis-number" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="make">Make *</label>
+                                    <input type="text" id="make" required placeholder="Toyota, Honda, etc.">
+                                </div>
+                                <div class="form-group">
+                                    <label for="model">Model *</label>
+                                    <input type="text" id="model" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="year">Year</label>
+                                    <input type="number" id="year" min="1990" max="2024">
+                                </div>
+                                <div class="form-group">
+                                    <label for="color">Color</label>
+                                    <input type="text" id="color">
+                                </div>
+                                <div class="form-group">
+                                    <label for="engine-cc">Engine CC</label>
+                                    <input type="number" id="engine-cc">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="transmission">Transmission</label>
+                                    <select id="transmission">
+                                        <option value="Automatic">Automatic</option>
+                                        <option value="Manual">Manual</option>
+                                        <option value="CVT">CVT</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="fuel-type">Fuel Type</label>
+                                    <select id="fuel-type">
+                                        <option value="Octane">Octane</option>
+                                        <option value="Petrol">Petrol</option>
+                                        <option value="Diesel">Diesel</option>
+                                        <option value="Hybrid">Hybrid</option>
+                                        <option value="Electric">Electric</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="auction-grade">Auction Grade</label>
+                                    <select id="auction-grade">
+                                        <option value="R">R (Regular)</option>
+                                        <option value="4.5">4.5</option>
+                                        <option value="4">4</option>
+                                        <option value="3.5">3.5</option>
+                                        <option value="3">3</option>
+                                        <option value="2">2</option>
+                                        <option value="1">1</option>
+                                        <option value="0">0 (New)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3><i class="fas fa-yen-sign"></i> Japan Costs</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="car-price">Car Price (JPY)</label>
+                                    <input type="number" id="car-price" min="0" step="1000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="auction-fees">Auction Fees (JPY)</label>
+                                    <input type="number" id="auction-fees" min="0" step="1000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="agent-commission">Agent Commission (JPY)</label>
+                                    <input type="number" id="agent-commission" min="0" step="1000">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="deregistration-fee">Deregistration Fee (JPY)</label>
+                                    <input type="number" id="deregistration-fee" min="0" step="1000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inland-transport-jp">Inland Transport JP (JPY)</label>
+                                    <input type="number" id="inland-transport-jp" min="0" step="1000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="other-japan-costs">Other Japan Costs (JPY)</label>
+                                    <input type="number" id="other-japan-costs" min="0" step="1000">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3><i class="fas fa-ship"></i> Shipping Costs</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="ocean-freight">Ocean Freight (USD)</label>
+                                    <input type="number" id="ocean-freight" min="0" step="100">
+                                </div>
+                                <div class="form-group">
+                                    <label for="marine-insurance">Marine Insurance (USD)</label>
+                                    <input type="number" id="marine-insurance" min="0" step="10">
+                                </div>
+                                <div class="form-group">
+                                    <label for="documentation-fee">Documentation Fee (USD)</label>
+                                    <input type="number" id="documentation-fee" min="0" step="10">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3><i class="fas fa-passport"></i> Bangladesh Port Costs (BDT)</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="port-handling">Port Handling (BDT)</label>
+                                    <input type="number" id="port-handling" min="0" step="1000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="customs-duty">Customs Duty (BDT)</label>
+                                    <input type="number" id="customs-duty" min="0" step="10000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="supplementary-duty">Supplementary Duty (BDT)</label>
+                                    <input type="number" id="supplementary-duty" min="0" step="10000">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="vat">VAT (BDT)</label>
+                                    <input type="number" id="vat" min="0" step="10000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="ait">AIT (BDT)</label>
+                                    <input type="number" id="ait" min="0" step="1000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cf-agent-fee">C&F Agent Fee (BDT)</label>
+                                    <input type="number" id="cf-agent-fee" min="0" step="1000">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3><i class="fas fa-warehouse"></i> Bangladesh Inland Costs (BDT)</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="transport-bd">Transport to Showroom (BDT)</label>
+                                    <input type="number" id="transport-bd" min="0" step="1000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="reconditioning">Reconditioning (BDT)</label>
+                                    <input type="number" id="reconditioning" min="0" step="1000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="brta-fitness">BRTA Fitness (BDT)</label>
+                                    <input type="number" id="brta-fitness" min="0" step="1000">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3><i class="fas fa-store"></i> Status & Pricing</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="status">Current Status</label>
+                                    <select id="status">
+                                        <option value="purchased">Purchased (Japan)</option>
+                                        <option value="in-transit">In Transit</option>
+                                        <option value="at-port">At BD Port</option>
+                                        <option value="cleared">Customs Cleared</option>
+                                        <option value="in-showroom">In Showroom</option>
+                                        <option value="sold">Sold</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="target-selling-price">Target Selling Price (BDT)</label>
+                                    <input type="number" id="target-selling-price" min="0" step="10000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="notes">Notes</label>
+                                    <textarea id="notes" rows="3" placeholder="Any additional information..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" id="calculate-total" class="btn secondary">
+                                <i class="fas fa-calculator"></i> Calculate Total
+                            </button>
+                            <button type="submit" class="btn primary">
+                                <i class="fas fa-save"></i> Save Car to Inventory
+                            </button>
+                        </div>
+
+                        <div id="total-cost-display" class="total-cost" style="display: none;">
+                            <h3>Estimated Total Cost: <span id="total-cost-amount">0</span> BDT</h3>
+                            <p>Exchange Rates: 1 JPY = <span id="jpy-rate">1.05</span> BDT | 1 USD = <span id="usd-rate">110</span> BDT</p>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Inventory Tab -->
+                <div id="inventory" class="tab-content">
+                    <h2><i class="fas fa-car"></i> Inventory</h2>
+                    
+                    <div class="inventory-controls">
+                        <div class="search-box">
+                            <input type="text" id="search-inventory" placeholder="Search by Chassis, Make, Model...">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" data-filter="all">All</button>
+                            <button class="filter-btn" data-filter="in-transit">In Transit</button>
+                            <button class="filter-btn" data-filter="at-port">At Port</button>
+                            <button class="filter-btn" data-filter="in-showroom">In Showroom</button>
+                            <button class="filter-btn" data-filter="sold">Sold</button>
+                        </div>
+                    </div>
+
+                    <div class="inventory-table-container">
+                        <table class="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th>Chassis No.</th>
+                                    <th>Car Details</th>
+                                    <th>Status</th>
+                                    <th>Total Cost (BDT)</th>
+                                    <th>Selling Price</th>
+                                    <th>Profit/Loss</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-table-body">
+                                <!-- Will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Cost Calculator Tab -->
+                <div id="cost-calculator" class="tab-content">
+                    <h2><i class="fas fa-calculator"></i> Cost Calculator</h2>
+                    
+                    <div class="calculator-container">
+                        <div class="calculator-input">
+                            <h3>Input Car Details</h3>
+                            <div class="form-group">
+                                <label for="calc-engine-cc">Engine CC</label>
+                                <input type="number" id="calc-engine-cc" placeholder="e.g., 1500" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="calc-fob-price">FOB Price (JPY)</label>
+                                <input type="number" id="calc-fob-price" placeholder="e.g., 500000" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="calc-freight">Freight (USD)</label>
+                                <input type="number" id="calc-freight" placeholder="e.g., 800" min="0">
+                            </div>
+                            <button id="calculate-costs" class="btn primary">Calculate All Costs</button>
+                        </div>
+                        
+                        <div class="calculator-results">
+                            <h3>Breakdown</h3>
+                            <div class="cost-breakdown">
+                                <div class="cost-item">
+                                    <span>FOB Price</span>
+                                    <span id="calc-fob-result">0 BDT</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span>Shipping & Insurance</span>
+                                    <span id="calc-shipping-result">0 BDT</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span>Customs Duty</span>
+                                    <span id="calc-duty-result">0 BDT</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span>Supplementary Duty</span>
+                                    <span id="calc-sd-result">0 BDT</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span>VAT</span>
+                                    <span id="calc-vat-result">0 BDT</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span>Other Taxes</span>
+                                    <span id="calc-other-taxes">0 BDT</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span>Port & Agent Fees</span>
+                                    <span id="calc-port-fees">0 BDT</span>
+                                </div>
+                                <div class="cost-item total">
+                                    <span><strong>Total Landed Cost</strong></span>
+                                    <span id="calc-total-cost"><strong>0 BDT</strong></span>
+                                </div>
+                                <div class="cost-item">
+                                    <span>Suggested Selling Price (20% Margin)</span>
+                                    <span id="calc-selling-price">0 BDT</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Tab -->
+                <div id="reports" class="tab-content">
+                    <h2><i class="fas fa-chart-bar"></i> Reports</h2>
+                    
+                    <div class="reports-container">
+                        <div class="report-card">
+                            <h3>Monthly Summary</h3>
+                            <canvas id="monthly-chart"></canvas>
+                        </div>
+                        
+                        <div class="report-card">
+                            <h3>Cost Distribution</h3>
+                            <canvas id="cost-chart"></canvas>
+                        </div>
+                        
+                        <div class="report-card">
+                            <h3>Stock by Status</h3>
+                            <div id="status-chart"></div>
+                        </div>
+                        
+                        <div class="report-card">
+                            <h3>Export Data</h3>
+                            <p>Export your inventory data for analysis</p>
+                            <button id="export-csv" class="btn secondary">
+                                <i class="fas fa-file-csv"></i> Export to CSV
+                            </button>
+                            <button id="export-pdf" class="btn secondary">
+                                <i class="fas fa-file-pdf"></i> Export to PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div id="settings" class="tab-content">
+                    <h2><i class="fas fa-cog"></i> Settings</h2>
+                    
+                    <div class="settings-container">
+                        <div class="setting-section">
+                            <h3>Exchange Rates</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="set-jpy-rate">JPY to BDT</label>
+                                    <input type="number" id="set-jpy-rate" step="0.01" value="1.05">
+                                </div>
+                                <div class="form-group">
+                                    <label for="set-usd-rate">USD to BDT</label>
+                                    <input type="number" id="set-usd-rate" step="0.1" value="110">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-section">
+                            <h3>Default Cost Percentages</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="set-auction-fee-percent">Auction Fee (%)</label>
+                                    <input type="number" id="set-auction-fee-percent" step="0.1" value="4">
+                                </div>
+                                <div class="form-group">
+                                    <label for="set-agent-commission-percent">Agent Commission (%)</label>
+                                    <input type="number" id="set-agent-commission-percent" step="0.1" value="3">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-section">
+                            <h3>Data Management</h3>
+                            <button id="backup-data" class="btn secondary">
+                                <i class="fas fa-download"></i> Backup Data
+                            </button>
+                            <button id="restore-data" class="btn secondary">
+                                <i class="fas fa-upload"></i> Restore Data
+                            </button>
+                            <button id="clear-data" class="btn danger">
+                                <i class="fas fa-trash"></i> Clear All Data
+                            </button>
+                        </div>
+                        
+                        <div class="setting-section">
+                            <h3>Save Settings</h3>
+                            <button id="save-settings" class="btn primary">
+                                <i class="fas fa-save"></i> Save All Settings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>Car Import Manager v1.0 | For Japan to Bangladesh Import Business</p>
+            <p>Data is stored locally in your browser</p>
+        </footer>
+    </div>
+
+    <!-- Car Detail Modal (hidden by default) -->
+    <div id="car-detail-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="car-detail-content">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
