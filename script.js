@@ -1,4 +1,4 @@
-// Main Application
+// Car Import Manager Application
 class CarImportManager {
     constructor() {
         this.cars = [];
@@ -10,6 +10,7 @@ class CarImportManager {
         };
         this.isEditing = false;
         this.currentEditId = null;
+        this.currentImages = [];
         
         this.init();
     }
@@ -26,7 +27,6 @@ class CarImportManager {
         const savedCars = localStorage.getItem('carImportInventory');
         if (savedCars) {
             this.cars = JSON.parse(savedCars);
-            console.log(`Loaded ${this.cars.length} cars from storage`);
         }
         
         // Load settings from localStorage
@@ -44,7 +44,6 @@ class CarImportManager {
     saveData() {
         localStorage.setItem('carImportInventory', JSON.stringify(this.cars));
         localStorage.setItem('carImportSettings', JSON.stringify(this.settings));
-        console.log(`Saved ${this.cars.length} cars to storage`);
     }
     
     setupEventListeners() {
@@ -60,6 +59,15 @@ class CarImportManager {
                 });
                 e.currentTarget.classList.add('active');
             });
+        });
+        
+        // Image Upload
+        document.getElementById('upload-btn').addEventListener('click', () => {
+            document.getElementById('car-images').click();
+        });
+        
+        document.getElementById('car-images').addEventListener('change', (e) => {
+            this.handleImageUpload(e.target.files);
         });
         
         // Add Car Form
@@ -186,6 +194,86 @@ class CarImportManager {
         this.showToast('Settings saved successfully', 'success');
     }
     
+    handleImageUpload(files) {
+        const previewContainer = document.getElementById('image-preview');
+        const maxSize = 5 * 1024 * 1024; // 5MB max per image
+        
+        // Clear existing preview if not in edit mode
+        if (!this.isEditing) {
+            this.currentImages = [];
+            previewContainer.innerHTML = '';
+        }
+        
+        // Process each file
+        Array.from(files).forEach((file) => {
+            if (file.size > maxSize) {
+                this.showToast(`Image ${file.name} is too large (max 5MB)`, 'error');
+                return;
+            }
+            
+            if (!file.type.match('image.*')) {
+                this.showToast(`File ${file.name} is not an image`, 'error');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const imageData = e.target.result;
+                this.currentImages.push(imageData);
+                this.updateImagePreview(imageData, previewContainer);
+            };
+            
+            reader.onerror = () => {
+                this.showToast(`Error reading image ${file.name}`, 'error');
+            };
+            
+            reader.readAsDataURL(file);
+        });
+        
+        // Update file input to allow more selections
+        document.getElementById('car-images').value = '';
+    }
+    
+    updateImagePreview(imageData, container) {
+        // Remove placeholder if it exists
+        const placeholder = container.querySelector('.image-placeholder');
+        if (placeholder) {
+            placeholder.remove();
+        }
+        
+        const imgWrapper = document.createElement('div');
+        imgWrapper.className = 'image-preview-item';
+        imgWrapper.innerHTML = `
+            <img src="${imageData}" alt="Car photo">
+            <button type="button" class="remove-image-btn">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        
+        // Add remove functionality
+        const removeBtn = imgWrapper.querySelector('.remove-image-btn');
+        removeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const index = this.currentImages.indexOf(imageData);
+            if (index > -1) {
+                this.currentImages.splice(index, 1);
+            }
+            imgWrapper.remove();
+            
+            // Show placeholder if no images left
+            if (container.children.length === 0) {
+                container.innerHTML = `
+                    <div class="image-placeholder">
+                        <i class="fas fa-car fa-2x"></i>
+                        <p>No images selected</p>
+                    </div>
+                `;
+            }
+        });
+        
+        container.appendChild(imgWrapper);
+    }
+    
     addNewCar() {
         try {
             // Collect form data
@@ -202,6 +290,7 @@ class CarImportManager {
                     fuelType: document.getElementById('fuel-type').value,
                     auctionGrade: document.getElementById('auction-grade').value
                 },
+                images: [...this.currentImages],
                 costs: {
                     japan: {
                         carPrice: parseFloat(document.getElementById('car-price').value) || 0,
@@ -293,6 +382,11 @@ class CarImportManager {
                 auctionGrade: document.getElementById('auction-grade').value
             };
             
+            // Update images if new ones were uploaded
+            if (this.currentImages.length > 0) {
+                car.images = [...this.currentImages];
+            }
+            
             car.costs = {
                 japan: {
                     carPrice: parseFloat(document.getElementById('car-price').value) || 0,
@@ -356,6 +450,16 @@ class CarImportManager {
         document.getElementById('add-car-form').reset();
         document.getElementById('car-detail-modal').style.display = 'none';
         document.getElementById('total-cost-display').style.display = 'none';
+        
+        // Reset image preview
+        const previewContainer = document.getElementById('image-preview');
+        previewContainer.innerHTML = `
+            <div class="image-placeholder">
+                <i class="fas fa-car fa-2x"></i>
+                <p>No images selected</p>
+            </div>
+        `;
+        this.currentImages = [];
         
         // Reset edit mode
         this.isEditing = false;
@@ -545,7 +649,7 @@ class CarImportManager {
         if (filteredCars.length === 0) {
             container.innerHTML = `
                 <tr>
-                    <td colspan="7" class="empty-table">
+                    <td colspan="8" class="empty-table">
                         <i class="fas fa-car fa-2x"></i>
                         <p>No cars found matching your criteria</p>
                     </td>
@@ -558,8 +662,18 @@ class CarImportManager {
             const profitLoss = car.sellingPrice ? car.sellingPrice - car.totalCost : 0;
             const profitClass = profitLoss > 0 ? 'profit' : profitLoss < 0 ? 'loss' : '';
             
+            // Get first image or show placeholder
+            const firstImage = car.images && car.images.length > 0 
+                ? car.images[0] 
+                : null;
+            
             return `
                 <tr>
+                    <td>
+                        ${firstImage 
+                            ? `<img src="${firstImage}" alt="${car.basicInfo.make} ${car.basicInfo.model}" class="car-image-thumb">` 
+                            : '<div class="image-placeholder"><i class="fas fa-car"></i></div>'}
+                    </td>
                     <td>${car.basicInfo.chassisNumber}</td>
                     <td>
                         <strong>${car.basicInfo.make} ${car.basicInfo.model}</strong><br>
@@ -641,10 +755,29 @@ class CarImportManager {
             car.costs.inlandBD.brtaFitness
         );
         
+        // Create image gallery HTML
+        let imageGalleryHTML = '';
+        if (car.images && car.images.length > 0) {
+            imageGalleryHTML = `
+                <div class="detail-section">
+                    <h3><i class="fas fa-images"></i> Car Photos (${car.images.length})</h3>
+                    <div class="image-gallery">
+                        ${car.images.map((img, index) => `
+                            <div class="gallery-item">
+                                <img src="${img}" alt="Car photo ${index + 1}">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
         content.innerHTML = `
             <h2>${car.basicInfo.make} ${car.basicInfo.model} - ${car.basicInfo.chassisNumber}</h2>
             
             <div class="car-detail-sections">
+                ${imageGalleryHTML}
+                
                 <div class="detail-section">
                     <h3><i class="fas fa-info-circle"></i> Basic Information</h3>
                     <div class="detail-grid">
@@ -766,6 +899,7 @@ class CarImportManager {
         this.showTab('add-car');
         this.isEditing = true;
         this.currentEditId = carId;
+        this.currentImages = [...(car.images || [])];
         
         // Update form title and button
         document.querySelector('#add-car h2').innerHTML = '<i class="fas fa-edit"></i> Edit Car';
@@ -812,6 +946,23 @@ class CarImportManager {
         document.getElementById('status').value = car.status;
         document.getElementById('target-selling-price').value = car.targetSellingPrice;
         document.getElementById('notes').value = car.notes;
+        
+        // Update image preview
+        const previewContainer = document.getElementById('image-preview');
+        previewContainer.innerHTML = '';
+        
+        if (this.currentImages.length > 0) {
+            this.currentImages.forEach(imageData => {
+                this.updateImagePreview(imageData, previewContainer);
+            });
+        } else {
+            previewContainer.innerHTML = `
+                <div class="image-placeholder">
+                    <i class="fas fa-car fa-2x"></i>
+                    <p>No images selected</p>
+                </div>
+            `;
+        }
         
         // Calculate and show total cost
         this.calculateTotalCost();

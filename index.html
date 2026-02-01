@@ -13,8 +13,10 @@
         <header>
             <div class="logo">
                 <i class="fas fa-ship"></i>
-                <h1>Car Import Manager</h1>
-                <span class="subtitle">Japan → Bangladesh</span>
+                <div>
+                    <h1>Car Import Manager</h1>
+                    <span class="subtitle">Japan → Bangladesh</span>
+                </div>
             </div>
             <div class="header-stats">
                 <div class="stat-box">
@@ -153,6 +155,26 @@
                                         <option value="1">1</option>
                                         <option value="0">0 (New)</option>
                                     </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Upload Section -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-images"></i> Car Photos</h3>
+                            <div class="image-upload-container">
+                                <div class="upload-options">
+                                    <input type="file" id="car-images" accept="image/*" multiple style="display: none;">
+                                    <button type="button" id="upload-btn" class="upload-btn">
+                                        <i class="fas fa-upload"></i> Choose Photos
+                                    </button>
+                                    <p class="form-hint">You can select multiple images. Recommended: Exterior, Interior, Engine, Documents</p>
+                                </div>
+                                <div class="image-preview" id="image-preview">
+                                    <div class="image-placeholder">
+                                        <i class="fas fa-car fa-2x"></i>
+                                        <p>No images selected</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -320,6 +342,7 @@
                         <table class="inventory-table">
                             <thead>
                                 <tr>
+                                    <th>Image</th>
                                     <th>Chassis No.</th>
                                     <th>Car Details</th>
                                     <th>Status</th>
@@ -355,7 +378,7 @@
                                 <label for="calc-freight">Freight (USD)</label>
                                 <input type="number" id="calc-freight" placeholder="e.g., 800" min="0">
                             </div>
-                            <button id="calculate-costs" class="btn primary">Calculate All Costs</button>
+                            <button type="button" id="calculate-costs" class="btn primary">Calculate All Costs</button>
                         </div>
                         
                         <div class="calculator-results">
@@ -408,16 +431,6 @@
                     
                     <div class="reports-container">
                         <div class="report-card">
-                            <h3>Monthly Summary</h3>
-                            <canvas id="monthly-chart"></canvas>
-                        </div>
-                        
-                        <div class="report-card">
-                            <h3>Cost Distribution</h3>
-                            <canvas id="cost-chart"></canvas>
-                        </div>
-                        
-                        <div class="report-card">
                             <h3>Stock by Status</h3>
                             <div id="status-chart"></div>
                         </div>
@@ -428,8 +441,16 @@
                             <button id="export-csv" class="btn secondary">
                                 <i class="fas fa-file-csv"></i> Export to CSV
                             </button>
-                            <button id="export-pdf" class="btn secondary">
-                                <i class="fas fa-file-pdf"></i> Export to PDF
+                        </div>
+                        
+                        <div class="report-card">
+                            <h3>Data Management</h3>
+                            <p>Backup and restore your data</p>
+                            <button id="backup-data" class="btn secondary">
+                                <i class="fas fa-download"></i> Backup Data
+                            </button>
+                            <button id="clear-data" class="btn danger">
+                                <i class="fas fa-trash"></i> Clear All Data
                             </button>
                         </div>
                     </div>
@@ -469,19 +490,6 @@
                         </div>
                         
                         <div class="setting-section">
-                            <h3>Data Management</h3>
-                            <button id="backup-data" class="btn secondary">
-                                <i class="fas fa-download"></i> Backup Data
-                            </button>
-                            <button id="restore-data" class="btn secondary">
-                                <i class="fas fa-upload"></i> Restore Data
-                            </button>
-                            <button id="clear-data" class="btn danger">
-                                <i class="fas fa-trash"></i> Clear All Data
-                            </button>
-                        </div>
-                        
-                        <div class="setting-section">
                             <h3>Save Settings</h3>
                             <button id="save-settings" class="btn primary">
                                 <i class="fas fa-save"></i> Save All Settings
@@ -499,7 +507,7 @@
         </footer>
     </div>
 
-    <!-- Car Detail Modal (hidden by default) -->
+    <!-- Car Detail Modal -->
     <div id="car-detail-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
@@ -512,7 +520,6 @@
     <!-- Toast Notification -->
     <div id="toast" class="toast"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
